@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_riverpod/controller/counter_controller.dart';
 
-final counterProvider = ChangeNotifierProvider<CounterController>((ref) {
-  return CounterController();
+final counterProvider = StateProvider<int>((ref) {
+  return 0;
 });
 
 class HomeScreen extends ConsumerWidget {
@@ -13,7 +13,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final counter = ref.watch(counterProvider).counter;
+    final counter = ref.watch(counterProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -34,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(counterProvider).incrementCounter();
+          ref.read(counterProvider.notifier).state = counter + 1;
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
