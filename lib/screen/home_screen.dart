@@ -1,39 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_riverpod/providers.dart';
 
 import 'decrement_screen.dart';
 
 ///HomeScreen widget
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-    print(_counter);
-  }
-
-  Future<void> _goToDecrementScreen(BuildContext context) async {
-    final newCounter = await Navigator.push<int>(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DecrementScreen(
-                  counter: _counter,
-                )));
-    setState(() {
-      _counter = newCounter ?? 0; // if null returned then set to 0
-    });
+  Future<void> _goToDecrementScreen(BuildContext context, int counter) async {
+    Navigator.push<int>(context,
+        MaterialPageRoute(builder: (context) => const DecrementScreen()));
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counter = ref.watch(counterControllerProvider).counter;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
@@ -43,12 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '$_counter',
+              '$counter',
               style: const TextStyle(fontSize: 100),
             ),
             ElevatedButton(
               onPressed: () {
-                _incrementCounter();
+                ref.read(counterControllerProvider).incrementCounter();
               },
               child: const Text(
                 'Increment',
@@ -59,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                _goToDecrementScreen(context);
+                _goToDecrementScreen(context, counter);
               },
               child: const Text(
                 "Go to Decrement Screen",
